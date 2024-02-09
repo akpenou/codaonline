@@ -97,7 +97,7 @@ export class CodaOnline {
     await page.click(".gs1-page-content button#SubmitPassword");
     await page.waitForNavigation();
 
-    await page.waitForSelector("app main dashboard", { timeout: 5000 });
+    await page.waitForSelector("app main dashboard");
 
     // Extract jwtToken from cookies
     const cookies = await page.cookies();
@@ -159,8 +159,11 @@ export class CodaOnline {
     const formData = new FormData();
 
     const companyId = 975232958;
-    const codeGPC = "0010";
-    const category = "VÊTEMENTS ET CHAUSSURES";
+    const codeGPC = "10001355";
+    const category = "Assortiments de Vêtements d’une Pièce";
+
+    // const codeGPC = "10001333";
+    // const category = "Robes";
 
     const dataPayload: Product = {
       gtin: data.gtin, // "3666355054241",
