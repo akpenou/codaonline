@@ -8,4 +8,4 @@ WORKDIR /usr/src/app
 COPY . .
 RUN yarn
 RUN yarn build
-RUN yarn start
+CMD yarn start
