@@ -34,5 +34,5 @@ export async function GET(request: NextRequest) {
       !variant?.barcode || variant?.barcode === "" || variant?.barcode === " "
   );
 
-  return Response.json(variants.slice(0, 50));
+  return Response.json(variants.slice(0, 1000));
 }
