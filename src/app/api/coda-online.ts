@@ -75,7 +75,7 @@ export class CodaOnline {
       throw new Error("email/password is missing");
     }
 
-    const browser = await puppeteer.launch({ headless: true });
+    const browser = await puppeteer.launch({ headless: "new" });
     const page = await browser.newPage();
 
     // Go to the website
