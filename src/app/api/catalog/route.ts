@@ -44,13 +44,16 @@ export async function POST(request: Request) {
 
   const { variantId, codeEAN } = z
     .object({
-      variantId: z.number(),
-      codeEAN: z.string(),
+      variantId: z.union([z.number(), z.string()]),
+      codeEAN: z.union([z.number(), z.string()]),
     })
     .parse(await request.json());
 
   const shopify = new Shopify(accessToken);
-  const { variant } = await shopify.addCodeEAN(String(variantId), codeEAN);
+  const { variant } = await shopify.addCodeEAN(
+    String(variantId),
+    String(codeEAN)
+  );
 
   return Response.json(variant);
 }
