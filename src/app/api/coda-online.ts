@@ -92,9 +92,13 @@ export class CodaOnline {
 
     // Go to the website
     await page.goto("https://codeonline-gtin.gs1.fr/");
-    await page.waitForSelector("#onetrust-consent-sdk");
-    await page.click("#onetrust-accept-btn-handler");
-    await sleep(1000);
+    try {
+      await page.waitForSelector("#onetrust-consent-sdk");
+      await page.click("#onetrust-accept-btn-handler");
+      await sleep(1000);
+    } catch (error) {
+      console.log("no cookies");
+    }
 
     // Fill the form
     await page.waitForSelector("input#Email", { visible: true });
