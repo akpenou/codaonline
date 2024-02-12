@@ -111,9 +111,13 @@ export class CodaOnline {
     await sleep(1000);
 
     await page.click(".gs1-page-content button#SubmitPassword");
-    await page.waitForNavigation();
+    try {
+      await page.waitForNavigation({ timeout: 60_000 });
+    } catch (error) {
+      console.log("long navigation");
+    }
 
-    await page.waitForSelector("app main dashboard");
+    await page.waitForSelector("app main dashboard", { timeout: 60_000 });
 
     // Extract jwtToken from cookies
     const cookies = await page.cookies();
