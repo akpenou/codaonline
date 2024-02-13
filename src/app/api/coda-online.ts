@@ -117,7 +117,11 @@ export class CodaOnline {
       console.log("long navigation");
     }
 
-    await page.waitForSelector("app main dashboard", { timeout: 60_000 });
+    try {
+      await page.waitForSelector("app main dashboard", { timeout: 60_000 });
+    } catch (error) {
+      console.log("no dashboard");
+    }
 
     // Extract jwtToken from cookies
     const cookies = await page.cookies();
@@ -133,8 +137,17 @@ export class CodaOnline {
 
     if (jwtLocalStorage) {
       const accessToken: string = JSON.parse(jwtLocalStorage);
+
+      if (!accessToken) {
+        throw new Error("jwtToken not found");
+      }
+
       this.accessToken = accessToken;
       return accessToken;
+    }
+
+    if (!jwtCookie) {
+      throw new Error("jwtToken not found");
     }
 
     return jwtCookie?.value;
