@@ -21,11 +21,16 @@ export async function GET(request: NextRequest) {
     collection_id: "600837161285",
     fields: fields ?? "",
   });
+  const GLFDraft = await shopify.getCatalog({
+    collection_id: "617001189701",
+    fields: fields ?? "",
+  });
 
   const variants = _.uniqBy(
     _.flatten(
-      [...products, ...GLFProducts].map(({ variants, ...product }) =>
-        variants.map((variant: object) => ({ ...product, variant }))
+      [...products, ...GLFProducts, ...GLFDraft].map(
+        ({ variants, ...product }) =>
+          variants.map((variant: object) => ({ ...product, variant }))
       )
     ),
     "variant.id"
