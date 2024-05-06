@@ -76,7 +76,7 @@ export class CodaOnline {
     }
 
     const browser = await puppeteer.launch({
-      headless: "new",
+      headless: false, // "new",
       args: [
         "--disable-setuid-sandbox",
         "--no-sandbox",
@@ -93,8 +93,10 @@ export class CodaOnline {
     // Go to the website
     await page.goto("https://codeonline-gtin.gs1.fr/");
     try {
-      await page.waitForSelector("#onetrust-consent-sdk");
-      await page.click("#onetrust-accept-btn-handler");
+      await page.waitForSelector("#CybotCookiebotDialog");
+      await page.click(
+        "#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll"
+      );
       await sleep(1000);
     } catch (error) {
       console.log("no cookies");
