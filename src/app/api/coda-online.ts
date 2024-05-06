@@ -76,7 +76,7 @@ export class CodaOnline {
     }
 
     const browser = await puppeteer.launch({
-      headless: false, // "new",
+      headless: "new",
       args: [
         "--disable-setuid-sandbox",
         "--no-sandbox",
