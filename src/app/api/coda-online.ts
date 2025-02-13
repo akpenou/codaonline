@@ -97,7 +97,7 @@ export class CodaOnline {
       await page.click(
         "#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll"
       );
-      await sleep(1000);
+      await sleep(5000);
     } catch (error) {
       console.log("no cookies");
     }
