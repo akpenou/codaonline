@@ -75,8 +75,10 @@ export class CodaOnline {
       throw new Error("email/password is missing");
     }
 
+
     const browser = await puppeteer.launch({
       headless: "new",
+      // headless: false,
       args: [
         "--disable-setuid-sandbox",
         "--no-sandbox",
@@ -88,71 +90,78 @@ export class CodaOnline {
           ? process.env.PUPPETEER_EXECUTABLE_PATH
           : puppeteer.executablePath(),
     });
-    const page = await browser.newPage();
-
-    // Go to the website
-    await page.goto("https://codeonline-gtin.gs1.fr/");
-    try {
-      await page.waitForSelector("#CybotCookiebotDialog");
-      await page.click(
-        "#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll"
-      );
-      await sleep(1500);
-    } catch (error) {
-      console.log("no cookies");
-    }
-
-    // Fill the form
-    await page.waitForSelector("input#Email", { visible: true });
-    await page.type("input#Email", email);
-    await page.click("button#connexion_button");
-
-    await page.waitForSelector("input#password-field", { visible: true });
-    await page.type("input#password-field", password);
-
-    await sleep(1000);
-
-    await page.click(".gs1-page-content button#SubmitPassword");
-    try {
-      await page.waitForNavigation({ timeout: 60_000 });
-    } catch (error) {
-      console.log("long navigation");
-    }
 
     try {
-      await page.waitForSelector("app main dashboard", { timeout: 60_000 });
-    } catch (error) {
-      console.log("no dashboard");
-    }
+      const page = await browser.newPage();
 
-    // Extract jwtToken from cookies
-    const cookies = await page.cookies();
-    const jwtCookie = cookies.find((cookie) => cookie.name === "jwtToken");
+      // Go to the website
+      await page.goto("https://codeonline-gtin.gs1.fr/");
+      try {
+        await page.waitForSelector("#CybotCookiebotDialog", { visible: true, timeout: 30_000, });
+        await page.click(
+          "#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll"
+        );
+        await sleep(1500);
+      } catch (error) {
+        console.log("no cookies");
+      }
 
-    // Extract jwtToken from local storage
-    const jwtLocalStorage = await page.evaluate(() => {
-      return localStorage.getItem("jwtToken");
-    });
+      // Fill the form
+      await page.waitForSelector("input#Email", { visible: true });
+      await page.type("input#Email", email);
+      // await page.click("button#connexion_button");
 
-    // Close the browser
-    await browser.close();
+      await page.waitForSelector("input#password-field", { visible: true });
+      await page.type("input#password-field", password);
 
-    if (jwtLocalStorage) {
-      const accessToken: string = JSON.parse(jwtLocalStorage);
+      await sleep(1000);
 
-      if (!accessToken) {
+      await page.click(".gs1-page-content button#SubmitPassword");
+      try {
+        await page.waitForNavigation({ timeout: 60_000 });
+      } catch (error) {
+        console.log("long navigation");
+      }
+
+      try {
+        await page.waitForSelector("app main dashboard", { timeout: 60_000 });
+      } catch (error) {
+        console.log("no dashboard");
+      }
+
+      // Extract jwtToken from cookies
+      const cookies = await page.cookies();
+      const jwtCookie = cookies.find((cookie) => cookie.name === "jwtToken");
+
+      // Extract jwtToken from local storage
+      const jwtLocalStorage = await page.evaluate(() => {
+        return localStorage.getItem("jwtToken");
+      });
+
+      // Close the browser
+      await browser.close();
+
+      if (jwtLocalStorage) {
+        const accessToken: string = JSON.parse(jwtLocalStorage);
+
+        if (!accessToken) {
+          throw new Error("jwtToken not found");
+        }
+
+        this.accessToken = accessToken;
+        return accessToken;
+      }
+
+      if (!jwtCookie) {
         throw new Error("jwtToken not found");
       }
 
-      this.accessToken = accessToken;
-      return accessToken;
+      return jwtCookie?.value;
+    } catch (error) {
+      console.log("error", error);
+      await browser.close();
+      throw error;
     }
-
-    if (!jwtCookie) {
-      throw new Error("jwtToken not found");
-    }
-
-    return jwtCookie?.value;
   }
 
   async getCodeEAN() {

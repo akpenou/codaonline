@@ -4,8 +4,22 @@ import { z } from "zod";
 import _ from "lodash";
 
 import { Shopify } from "../shopify";
+import { CodaOnline } from "../coda-online";
 
 export async function GET(request: NextRequest) {
+  console.log(request.headers);
+  const email = request.headers.get("email") || "personalsellerparis@gmail.com";
+  const password = request.headers.get("password") || "GS1gs123!";
+  console.log({ email, password });
+
+  if (!email || !password) {
+    throw new Error("email - password is missing");
+  }
+  const codaonline = new CodaOnline({
+    email,
+    password,
+  });
+
   const accessToken = request.headers.get("access-token");
   if (!accessToken) {
     throw new Error("Header 'access-token' is missing");

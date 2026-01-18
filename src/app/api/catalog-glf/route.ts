@@ -1,7 +1,10 @@
+import { type NextRequest } from "next/server";
+
 import _ from "lodash";
+
 import { Shopify } from "../shopify";
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   const accessToken = request.headers.get("access-token");
   if (!accessToken) {
     throw new Error("Header 'access-token' is missing");
