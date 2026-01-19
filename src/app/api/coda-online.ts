@@ -105,7 +105,7 @@ export class CodaOnline {
     // Fill the form
     await page.waitForSelector("input#Email", { visible: true });
     await page.type("input#Email", email);
-    await page.click("button#connexion_button");
+    // await page.click("button#connexion_button");
 
     await page.waitForSelector("input#password-field", { visible: true });
     await page.type("input#password-field", password);
